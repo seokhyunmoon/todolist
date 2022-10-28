@@ -1,0 +1,19 @@
+.button {
+    background-color: green; 
+    color: white;
+}
+
+.button2 {background-color: orange;} 
+.button3 {background-color: skyblue; color:black;}
+.button4 {background-color: red;}
+
+/* .checkbox {
+    min-width: none;
+    min-height: none;
+    width: 15px;
+    height: 15px;
+    border: 1px;
+    border: 1px solid black;
+    cursor: pointer;
+    text-align: center;
+} */
