@@ -1,6 +1,6 @@
-let todos = []; /* (예) [{ id: 1, content: "중간 프로젝트 DUE 2022-10-28 23:59", isCompleted: false }]; */
-let id = 0; // set initial id value
-let isAllCompleted = false; // check all todos
+let todos = [{ id: 1, content: "중간 프로젝트 DUE 2022-10-28 23:59", isCompleted: false }];
+let id = 1; // set initial id value
+
 
 const todoListElem = $('#todo-container');
 
@@ -12,47 +12,6 @@ const getAllTodos = () => {
     return todos;
 }
 
-const getCompletedTodos = () => {
-    return todos.filter(todo => todo.isCompleted === true );
-}
-
-const setIsAllCompleted = (bool) => {isAllCompleted = bool};
-
-const completeAll = () => {
-    // const newTodos = getAllTodos().map(todo => ({...todo, isCompleted: true }) )
-    // setTodos(newTodos)
-
-}
-
-const incompleteAll = () => {
-    const newTodos =  getAllTodos().map(todo => ({...todo, isCompleted: false }) );
-    setTodos(newTodos)
-}
-
-const checkIsAllCompleted = () => {
-    if(getAllTodos().length === getCompletedTodos().length ){
-        setIsAllCompleted(true);
-        completeAllBtnElem.classList.add('checked');
-    }else {
-        setIsAllCompleted(false);
-        completeAllBtnElem.classList.remove('checked');
-    }
-}
-
-const onClickCompleteAll = () => {
-    if(!getAllTodos().length){
-        return; 
-    } 
-    if(isAllCompleted){
-        incompleteAll(); 
-    } else {
-        completeAll();
-    }
-    setIsAllCompleted(!isAllCompleted); 
-    paintTodos(); 
-    setLeftItems()
-}
-
 const appendTodos = (text) => {
     let newId = ++id;
     const newTodos = todos.concat({ id: newId, isCompleted: false, content: text });
@@ -60,43 +19,32 @@ const appendTodos = (text) => {
     paintTodos();
 }
 
-const deleteTodo = (todoId) => {
-    const newTodos = getAllTodos().filter(todo => todo.id !== todoId );
+const deleteTodo = (deleteId) => {
+    const newTodos = getAllTodos().filter(todo => todo.id !== deleteId );
     setTodos(newTodos);
     paintTodos();
 }
 
 const completeTodo = (completeId) => {
-    
-    /*
-    const newTodos = getAllTodos().map(todo => todo.id === todoId ? {...todo,  isCompleted: !todo.isCompleted} : todo );
-    setTodos(newTodos);
-    paintTodos();
-    */
-
-
     $.each(todos, (_, todo) => {
         if (todo.id === completeId) {
             todo.isCompleted = !todo.isCompleted;
         }
     });
     paintTodos();
-
 }
 
- /*
-const completeAll = () => {
-    if (myCheckbox.checked == true){
-        checkboxes.forEach(function(checkbox){
-            checkbox.checked = true;
-        });
-    }
-    else{
-        checkboxes.forEach(function(checkbox){
-            checkbox.checked = false;
-        });
-    }
-} */
+const completeAll = (myCheckbox) => {
+    const checkboxes = $("input[type='checkbox']:gt(0)");
+    $.each(checkboxes, (_, checkbox) => {
+        if (myCheckbox.checked == true) {
+            checkboxes.checked = true;
+        } else {
+            checkboxes.checked = false;
+        }
+    });
+    paintTodos();
+}
 
 const paintTodos = () => {
     todoListElem.empty();
@@ -105,29 +53,23 @@ const paintTodos = () => {
 
 const paintTodo = (_, todo) => {
 
+    // 리스트 생성
     const todoItemElem = $('<div>').addClass('todo-item col col-12 p-2 input-group');
     
-    const checkboxElem = $('<div>').addClass('checkbox input-group-prepend text-dark').text(todo.isCompleted ? "✔" : "☐");
-    //const checkboxElem = document.createElement('div');
-    //checkboxElem.classList.add('checkbox');
+    // 체크 박스 생성 
+    const checkboxElem = $('<div>').addClass('checkbox').text(todo.isCompleted ? "✔" : "☐");
     checkboxElem.click(() => completeTodo(todo.id));
-
-    const delBtnElem = $('<button>').addClass('delBtn button').html(todo.isDeleted = "X");
+    // 삭제 버튼 생성
+    const delBtnElem = $('<button>').addClass('delBtn button').html("X");
     delBtnElem.click(() => deleteTodo(todo.id));
-    
-    // if(todo.isCompleted) {
-    //     todoItemElem.classList.add('checked');
-    //     checkboxElem.innerText = '✔';
-    // }
 
+    // 리스트 구성 요소 합치기
     const todoElem = $('<input>').attr("type", "text").attr("disabled", true).addClass("todo form-control").val(todo.content);
     todoItemElem.append(checkboxElem);
     todoItemElem.append(todoElem);
     todoItemElem.append(delBtnElem);
     todoListElem.append(todoItemElem);
-
 }
-
 const init = () => {
 
     todoAddBtnElem.on("click", () => {
@@ -139,26 +81,18 @@ const init = () => {
             appendTodos($(e.target).val()); $(e.target).val('');
         }
     });
+
+    todoClearCompletedBtnElem.on("click", () => completeAll(todo.isCompleted));
+
     paintTodos();
 
-    
 }
 
 $(function () {
     init();
 }); 
 
-const init_1 = () => {
-    // todoCheckAllBtnElem.on("click", () => {
 
-    // });
-    todoCheckAllBtnElem.addEventListener('click',  onClickCompleteAll);
-
-}
-
-$(function () {
-    init_1();
-});
 
 const todoInputElem = $('#todo-input');
 const todoAddBtnElem = $("#todo-btn-add");
@@ -170,18 +104,6 @@ const todoCompletedBtnElem = $("todo-btn-completed");
 const todoActiveBtnElem = $("todo-btn-active");
 const todoAllBtnElem = $("todo-btn-all");
 const todoClearCompletedBtnElem = $("#todo-clear-completed");
-
-/*
-const init_buttons = () => {
-    todoCompletedBtnElem.on("click", () = > {
-
-    });
-}
-
-$(function() {
-    init_buttons();
-});
-*/
 
 /* 
 var total = 0;
